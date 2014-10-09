@@ -2,4 +2,4 @@
 
 SHELLSHOCK_PATH: /tmp/shellshock.sh
 WHEN_CLAUSE: "'Vulnerable' in test_vuln.stdout"
-FAILED_CLAUSE: "'Vulnerable' in test_vuln.stdout"
+FAILED_CLAUSE: "'Vulnerable' in test_vuln_again.stdout"

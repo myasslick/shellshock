@@ -32,6 +32,59 @@ or
       roles:
         - { role: shellshock, SHELL_SHOCK_PATH: /custom/path/shellshock.sh }
 
+
+Demo
+----
+
+Here is a demo on an **affected** host:
+
+```
+
+PLAY [all] ********************************************************************
+
+TASK: [shellshock | Upload shellshock test script] ****************************
+changed: [192.168.33.10]
+
+TASK: [shellshock | Test if host is vulnerable to shellshock] *****************
+changed: [192.168.33.10]
+
+TASK: [shellshock | Update bash if we are vulnerable to shellshock] ***********
+changed: [192.168.33.10]
+
+TASK: [shellshock | Test if host is still vulnerable to shellshock after update] ***
+changed: [192.168.33.10]
+
+TASK: [shellshock | Remove shellshock script] *********************************
+ok: [192.168.33.10]
+
+PLAY RECAP ********************************************************************
+192.168.33.10              : ok=5    changed=4    unreachable=0    failed=0
+```
+
+Here is a demo on an **unaffected** host:
+
+```
+PLAY [all] ********************************************************************
+
+TASK: [shellshock | Upload shellshock test script] ****************************
+ok: [192.168.33.10]
+
+TASK: [shellshock | Test if host is vulnerable to shellshock] *****************
+ok: [192.168.33.10]
+
+TASK: [shellshock | Update bash if we are vulnerable to shellshock] ***********
+skipping: [192.168.33.10]
+
+TASK: [shellshock | Test if host is still vulnerable to shellshock after update] ***
+skipping: [192.168.33.10]
+
+TASK: [shellshock | Remove shellshock script] *********************************
+ok: [192.168.33.10]
+
+PLAY RECAP ********************************************************************
+192.168.33.10              : ok=3    changed=0    unreachable=0    failed=0
+```
+
 Acknowledgement
 ---------------
 
