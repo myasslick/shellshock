@@ -85,6 +85,34 @@ PLAY RECAP ********************************************************************
 192.168.33.10              : ok=3    changed=0    unreachable=0    failed=0
 ```
 
+Testing
+-------
+
+I recommend using vagrant to test this role's effectiveness. Assuming you have
+a directory to host your Vagrantfile:
+
+```
+vagrant init hashicorp/precise32
+vagrant up
+```
+
+Then, your entry-point might be:
+
+```
+---
+
+- hosts: all
+  gather_facts: no
+  roles:
+    - shellshock
+```
+
+and your testing inventory file might be:
+
+```
+192.168.33.10 ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key ansible_ssh_user=vagrant
+```
+
 Acknowledgement
 ---------------
 
