@@ -1,0 +1,22 @@
+- name: Upload shellshock test script
+  copy: src=shellshock.sh dest={{ SHELLSHOCK_PATH }} mode=755
+
+- name: Test if host is vulnerable to shellshock
+  command: "{{ SHELLSHOCK_PATH }}"
+  register: test_vuln
+  ignore_errors: yes
+  changed_when: WHEN_CLAUSE
+
+- name: Update bash if we are vulnerable to shellshock
+  apt: name=bash state=latest update_cache=yes
+  when: WHEN_CLAUSE
+  sudo: True
+
+- name: Test if host is still vulnerable to shellshock after update
+  command: "{{ SHELLSHOCK_PATH }}"
+  register: test_vuln_again
+  failed_when: FAILED_CLAUSE
+  when: WHEN_CLAUSE
+
+- name: Remove shellshock script
+  file: path=/tmp/shellshock state=absent
