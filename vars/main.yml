@@ -13,3 +13,4 @@ WHEN_CLAUSE: "'Vulnerable' in test_vuln.stdout"
 FAILED_CLAUSE: "'Vulnerable' in test_vuln_again.stdout"
 IS_EOL_CLAUSE: "(ansible_distribution_version in
                    ['11.04', '11.10', '13.04', '13.10'])"
+IS_EOL_AND_VULNERABLE: "{{ WHEN_CLAUSE}} and {{ IS_EOL_CLAUSE }}"

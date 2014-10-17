@@ -14,7 +14,7 @@
            replace={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}
            backup=yes
            dest={{ SOURCE_LIST }}
-  when: IS_EOL_CLAUSE and WHEN_CLAUSE
+  when: IS_EOL_AND_VULNERABLE
   sudo: True
 
 - name: Update bash if we are vulnerable to shellshock
@@ -35,5 +35,5 @@
   replace: regexp={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}
            replace={{ ansible_distribution_release }}
            dest={{ SOURCE_LIST }}
-  when: IS_EOL_CLAUSE and WHEN_CLAUSE
+  when: IS_EOL_AND_VULNERABLE
   sudo: True
