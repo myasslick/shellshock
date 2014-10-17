@@ -16,7 +16,7 @@ tmpdir=`mktemp -d -t tmp.XXXXXXXX`
 
 [ -n "$1" ] && bash=$(which $1) || bash=$(which bash)
 echo -e "\033[95mTesting $bash ..."
-echo $($bash --version | head -n 1)
+$bash -c 'echo "Bash version $BASH_VERSION"'
 echo -e "\033[39m"
 
 #r=`a="() { echo x;}" $bash -c a 2>/dev/null`
@@ -29,8 +29,8 @@ elif [ -n "$(env 'BASH_FUNC_a%%'="() { echo x;}" $bash -c a 2>/dev/null)" ]; the
 elif [ -n "$(env 'BASH_FUNC_a()'="() { echo x;}" $bash -c a 2>/dev/null)" ]; then
 	echo -e "\033[92mVariable function parser pre/suffixed [(), redhat], bugs not exploitable\033[39m"
 	scary=0
-elif [ -n "$(env 'BASH_FUNC_<a>%%'="() { echo x;}" $bash -c a 2>/dev/null)" ]; then
-	echo -e "\033[92mVariable function parser pre/suffixed [<..>%%, apple], bugs not exploitable\033[39m"
+elif [ -n "$(env '__BASH_FUNC<a>()'="() { echo x;}" $bash -c a 2>/dev/null)" ]; then
+	echo -e "\033[92mVariable function parser pre/suffixed [__BASH_FUNC<..>(), apple], bugs not exploitable\033[39m"
 	scary=0
 else
 	echo -e "\033[92mVariable function parser inactive, bugs not exploitable\033[39m"
@@ -45,17 +45,18 @@ else
 	good "CVE-2014-6271 (original shellshock)"
 fi
 
-cd $tmpdir
+pushd $tmpdir > /dev/null
 env x='() { function a a>\' $bash -c echo 2>/dev/null > /dev/null
 if [ -e echo ]; then
 	warn "CVE-2014-7169 (taviso bug)"
 else
 	good "CVE-2014-7169 (taviso bug)"
 fi
+popd > /dev/null
 
 $($bash -c "true $(printf '<<EOF %.0s' {1..80})" 2>$tmpdir/bashcheck.tmp)
 ret=$?
-grep -q AddressSanitizer $tmpdir/bashcheck.tmp
+grep AddressSanitizer $tmpdir/bashcheck.tmp > /dev/null
 if [ $? == 0 ] || [ $ret == 139 ]; then
 	warn "CVE-2014-7186 (redir_stack bug)"
 else
