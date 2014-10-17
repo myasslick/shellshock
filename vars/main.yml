@@ -1,5 +1,15 @@
 ---
 
-SHELLSHOCK_PATH: /tmp/shellshock.sh
+# See http://en.wikipedia.org/wiki/Ubuntu_%28operating_system%29
+UBUNTU_BUMP_TABLE:
+    "11.04": "precise"
+    "11.10": "precise"
+    "13.04": "trusty"
+    "13.10": "trusty"
+
+SOURCE_LIST: "/etc/apt/sources.list"
+SHELLSHOCK_PATH: "/tmp/shellshock.sh"
 WHEN_CLAUSE: "'Vulnerable' in test_vuln.stdout"
 FAILED_CLAUSE: "'Vulnerable' in test_vuln_again.stdout"
+IS_EOL_CLAUSE: "(ansible_distribution_version in
+                   ['11.04', '11.10', '13.04', '13.10'])"

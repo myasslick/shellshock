@@ -1,3 +1,5 @@
+---
+# BUG 1 - Support EOL Ubuntu versions upgrade to Trusty temporarily
 - name: Upload shellshock test script
   copy: src=shellshock.sh dest={{ SHELLSHOCK_PATH }} mode=755
 
@@ -6,6 +8,14 @@
   register: test_vuln
   ignore_errors: yes
   changed_when: WHEN_CLAUSE
+
+- name: Switch EOL versions to use the next LTS version in /etc/apt/sources.list
+  replace: regexp={{ ansible_distribution_release }}
+           replace={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}
+           backup=yes
+           dest={{ SOURCE_LIST }}
+  when: IS_EOL_CLAUSE and WHEN_CLAUSE
+  sudo: True
 
 - name: Update bash if we are vulnerable to shellshock
   apt: name=bash state=latest update_cache=yes
@@ -20,3 +30,10 @@
 
 - name: Remove shellshock script
   file: path=/tmp/shellshock state=absent
+
+- name: Revert /etc/apt/sources.list back to use EOL version
+  replace: regexp={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}
+           replace={{ ansible_distribution_release }}
+           dest={{ SOURCE_LIST }}
+  when: IS_EOL_CLAUSE and WHEN_CLAUSE
+  sudo: True
