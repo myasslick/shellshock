@@ -1,21 +1,20 @@
 Role Name
 =========
 
-Shellshock vulnerability checker and remediation.
+Shellshock vulnerability checker and remediation for Ubuntu-based servers.
+
+If the remote host is using an end-of-life Ubuntu release (e.g. 13.10)
+then this playbook will edit the host's ``/etc/apt/sources.list``
+to use the next nearest LTS to get the latest bash update (and revert
+the file change at the end).
 
 Role Variables
 --------------
 
-There are three variables defined.
-
-* ``SHELLSHOCK_PATH`` is the full path of the shellshock test script placement,
-which defaults to ``/tmp/shellshock``.
-
-* ``WHEN_CLAUSE`` is a comparison condition that determines whether
-a host is vulnerable to ShellShock or not.
-
-* ``FAILED_CLAUSE`` is a comaprison condition that determins whether a host is **still**
-vulnerable to ShellShock or not.
+There are several role variables defined in ``vars/main.yml``, but
+the main one is ``SHELL_SHOCK_PATH`` which is the full path
+of the shellshock test script placement on the remote host. By
+default this is set to ``/tmp/shellshock``.
 
 Example Playbook
 ----------------
@@ -36,54 +35,53 @@ or
 Demo
 ----
 
-Here is a demo on an **affected** host:
-
-```
-
-PLAY [all] ********************************************************************
-
-TASK: [shellshock | Upload shellshock test script] ****************************
-changed: [192.168.33.10]
-
-TASK: [shellshock | Test if host is vulnerable to shellshock] *****************
-changed: [192.168.33.10]
-
-TASK: [shellshock | Update bash if we are vulnerable to shellshock] ***********
-changed: [192.168.33.10]
-
-TASK: [shellshock | Test if host is still vulnerable to shellshock after update] ***
-changed: [192.168.33.10]
-
-TASK: [shellshock | Remove shellshock script] *********************************
-ok: [192.168.33.10]
-
-PLAY RECAP ********************************************************************
-192.168.33.10              : ok=5    changed=4    unreachable=0    failed=0
-```
-
-Here is a demo on an **unaffected** host:
-
 ```
 PLAY [all] ********************************************************************
 
+GATHERING FACTS ***************************************************************
+ok: [127.0.0.1]
+ok: [127.0.0.3]
+ok: [127.0.0.2]
+
 TASK: [shellshock | Upload shellshock test script] ****************************
-ok: [192.168.33.10]
+ok: [127.0.0.3]
+ok: [127.0.0.1]
+changed: [127.0.0.2]
 
 TASK: [shellshock | Test if host is vulnerable to shellshock] *****************
-ok: [192.168.33.10]
+ok: [127.0.0.3]
+ok: [127.0.0.1]
+changed: [127.0.0.2]
+
+TASK: [shellshock | Switch EOL versions to use the next LTS version in /etc/apt/sources.list] ***
+skipping: [127.0.0.3]
+skipping: [127.0.0.1]
+changed: [127.0.0.2]
 
 TASK: [shellshock | Update bash if we are vulnerable to shellshock] ***********
-skipping: [192.168.33.10]
+skipping: [127.0.0.3]
+skipping: [127.0.0.1]
+changed: [127.0.0.2]
 
 TASK: [shellshock | Test if host is still vulnerable to shellshock after update] ***
-skipping: [192.168.33.10]
+skipping: [127.0.0.3]
+skipping: [127.0.0.1]
+changed: [127.0.0.2]
 
 TASK: [shellshock | Remove shellshock script] *********************************
-ok: [192.168.33.10]
+ok: [127.0.0.2]
+ok: [127.0.0.3]
+ok: [127.0.0.1]
+
+TASK: [shellshock | Revert /etc/apt/sources.list back to use EOL version] *****
+skipping: [127.0.0.1]
+skipping: [127.0.0.3]
+changed: [127.0.0.2]
 
 PLAY RECAP ********************************************************************
-192.168.33.10              : ok=3    changed=0    unreachable=0    failed=0
-```
+127.0.0.2                 : ok=8    changed=6    unreachable=0    failed=0
+127.0.0.3                  : ok=4    changed=0    unreachable=0    failed=0
+127.0.0.1                  : ok=4    changed=0    unreachable=0    failed=0
 
 Testing
 -------
@@ -102,7 +100,7 @@ Then, your entry-point might be:
 ---
 
 - hosts: all
-  gather_facts: no
+  gather_facts: yes
   roles:
     - shellshock
 ```
