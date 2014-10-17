@@ -7,7 +7,7 @@
   command: "{{ SHELLSHOCK_PATH }}"
   register: test_vuln
   ignore_errors: yes
-  changed_when: WHEN_CLAUSE
+  changed_when: WHEN_VULNERABLE
 
 - name: Switch EOL versions to use the next LTS version in /etc/apt/sources.list
   replace: regexp={{ ansible_distribution_release }}
@@ -19,14 +19,14 @@
 
 - name: Update bash if we are vulnerable to shellshock
   apt: name=bash state=latest update_cache=yes
-  when: WHEN_CLAUSE
+  when: WHEN_VULNERABLE
   sudo: True
 
 - name: Test if host is still vulnerable to shellshock after update
   command: "{{ SHELLSHOCK_PATH }}"
   register: test_vuln_again
   failed_when: FAILED_CLAUSE
-  when: WHEN_CLAUSE
+  when: WHEN_VULNERABLE
 
 - name: Remove shellshock script
   file: path=/tmp/shellshock state=absent
