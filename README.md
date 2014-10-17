@@ -19,15 +19,18 @@ default this is set to ``/tmp/shellshock``.
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+You need to allow gather_facts in order for this role to test whether
+the system is using EOL version of Ubuntu or not.
 
     - hosts: servers
+      gather_facts: yes
       roles:
          - shellshock
 
 or
 
     - hosts: servers
+      gather_facts: yes
       roles:
         - { role: shellshock, SHELL_SHOCK_PATH: /custom/path/shellshock.sh }
 
@@ -53,7 +56,7 @@ ok: [127.0.0.3]
 ok: [127.0.0.1]
 changed: [127.0.0.2]
 
-TASK: [shellshock | Switch EOL versions to use the next LTS version in /etc/apt/sources.list] ***
+TASK: [shellshock | Switch EOL versions to use the next LTS version in /etc/apt/sources.list]
 skipping: [127.0.0.3]
 skipping: [127.0.0.1]
 changed: [127.0.0.2]
@@ -82,6 +85,7 @@ PLAY RECAP ********************************************************************
 127.0.0.2                 : ok=8    changed=6    unreachable=0    failed=0
 127.0.0.3                  : ok=4    changed=0    unreachable=0    failed=0
 127.0.0.1                  : ok=4    changed=0    unreachable=0    failed=0
+```
 
 Testing
 -------
