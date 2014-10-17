@@ -1,5 +1,4 @@
 ---
-# BUG 1 - Support EOL Ubuntu versions upgrade to Trusty temporarily
 - name: Upload shellshock test script
   copy: src=shellshock.sh dest={{ SHELLSHOCK_PATH }} mode=755
 
@@ -9,6 +8,10 @@
   ignore_errors: yes
   changed_when: WHEN_VULNERABLE
 
+# Support EOL Ubuntu versions upgrade to Trusty or Precise
+# temporarily by replacing all occurences of the release
+# shorthand name with the next nearest LTS version (i.e.
+# saucy is replaced with trusty).
 - name: Switch EOL versions to use the next LTS version in /etc/apt/sources.list
   replace: regexp={{ ansible_distribution_release }}
            replace={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}
