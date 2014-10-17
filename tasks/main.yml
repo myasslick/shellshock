@@ -32,7 +32,7 @@
   when: WHEN_VULNERABLE
 
 - name: Remove shellshock script
-  file: path=/tmp/shellshock state=absent
+  file: path={{ SHELLSHOCK_PATH }} state=absent
 
 - name: Revert /etc/apt/sources.list back to use EOL version
   replace: regexp={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}

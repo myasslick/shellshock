@@ -12,9 +12,9 @@ Role Variables
 --------------
 
 There are several role variables defined in ``vars/main.yml``, but
-the main one is ``SHELL_SHOCK_PATH`` which is the full path
+the main one is ``SHELLSHOCK_PATH`` which is the full path
 of the shellshock test script placement on the remote host. By
-default this is set to ``/tmp/shellshock``.
+default this is set to ``/tmp/shellshock.sh``.
 
 Example Playbook
 ----------------
@@ -32,7 +32,7 @@ or
     - hosts: servers
       gather_facts: yes
       roles:
-        - { role: shellshock, SHELL_SHOCK_PATH: /custom/path/shellshock.sh }
+        - { role: shellshock, SHELLSHOCK_PATH: /custom/path/shellshock.sh }
 
 
 Demo
