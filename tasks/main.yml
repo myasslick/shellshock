@@ -25,7 +25,7 @@
 - name: Test if host is still vulnerable to shellshock after update
   command: "{{ SHELLSHOCK_PATH }}"
   register: test_vuln_again
-  failed_when: FAILED_CLAUSE
+  failed_when: STILL_VULNERABLE
   when: WHEN_VULNERABLE
 
 - name: Remove shellshock script
