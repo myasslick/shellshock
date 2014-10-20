@@ -1,0 +1,6 @@
+---
+
+- name: Update bash if we are vulnerable to shellshock (yum-based)
+  yum: name=bash state=latest
+  when: WHEN_VULNERABLE
+  sudo: True

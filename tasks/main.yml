@@ -8,22 +8,15 @@
   ignore_errors: yes
   changed_when: WHEN_VULNERABLE
 
-# Support EOL Ubuntu versions upgrade to Trusty or Precise
-# temporarily by replacing all occurences of the release
-# shorthand name with the next nearest LTS version (i.e.
-# saucy is replaced with trusty).
-- name: Switch EOL versions to use the next LTS version in /etc/apt/sources.list
-  replace: regexp={{ ansible_distribution_release }}
-           replace={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}
-           backup=yes
-           dest={{ SOURCE_LIST }}
-  when: IS_EOL_AND_VULNERABLE
-  sudo: True
+# Loading system package manager specific code (upgrade bash)
+# based on the package manager rather than distribution
+# since Amazon Linux will show "Amazon". Test against
+# ansible_pkg_mgr is a lot easier and more accurate.
+- include: apt-os.yml
+  when: ansible_pkg_mgr == 'apt'
 
-- name: Update bash if we are vulnerable to shellshock
-  apt: name=bash state=latest update_cache=yes
-  when: WHEN_VULNERABLE
-  sudo: True
+- include: yum-os.yml
+  when: ansible_pkg_mgr == 'yum'
 
 - name: Test if host is still vulnerable to shellshock after update
   command: "{{ SHELLSHOCK_PATH }}"
@@ -33,10 +26,3 @@
 
 - name: Remove shellshock script
   file: path={{ SHELLSHOCK_PATH }} state=absent
-
-- name: Revert /etc/apt/sources.list back to use EOL version
-  replace: regexp={{ UBUNTU_BUMP_TABLE[ansible_distribution_version] }}
-           replace={{ ansible_distribution_release }}
-           dest={{ SOURCE_LIST }}
-  when: IS_EOL_AND_VULNERABLE
-  sudo: True

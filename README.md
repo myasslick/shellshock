@@ -1,7 +1,8 @@
 Role Name
 =========
 
-Shellshock vulnerability checker and remediation for Ubuntu-based servers.
+Shellshock vulnerability checker and remediation for apt and yum-based
+servers.
 
 If the remote host is using an end-of-life Ubuntu release (e.g. 13.10)
 then this playbook will edit the host's ``/etc/apt/sources.list``
